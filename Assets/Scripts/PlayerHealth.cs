@@ -9,6 +9,7 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("Combo System")]
     private int currentCombo = 0;
+    public int GetCurrentCombo() { return currentCombo; }
 
     [Header("Events")]
     public UnityEvent onTakeDamage;

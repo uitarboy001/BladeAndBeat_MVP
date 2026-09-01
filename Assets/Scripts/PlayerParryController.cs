@@ -94,6 +94,11 @@ public class PlayerParryController : MonoBehaviour
                 {
                     // Perfect Parry
                     projectile.Reflect();
+                    
+                    int currentCombo = GetComponent<PlayerHealth>().GetCurrentCombo();
+                    float comboPitch = 1f + Mathf.Min(currentCombo * 0.02f, 0.5f);
+                    AudioManager.Instance.PlaySFX(AudioManager.Instance.parryClip, 1f, comboPitch);
+                    
                     GameJuice.Instance.TriggerHitstop(0.08f, 0.02f);
                     GameJuice.Instance.ShakeCamera(0.15f, 0.3f);
                     GameJuice.Instance.FlashScreen();
@@ -104,15 +109,15 @@ public class PlayerParryController : MonoBehaviour
                 {
                     // Good Parry
                     projectile.DestroyByBlock();
+                    AudioManager.Instance.PlaySFX(AudioManager.Instance.parryClip, 0.7f, 0.8f);
                     GameJuice.Instance.ShakeCamera(0.1f, 0.1f);
-                    // TODO: เล่นเสียง Block SFX
                 }
             }
         }
         else
         {
             // Parry (Miss timing)
-            // TODO: Animation ฟันลม / ติด Recovery สั้นๆ
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.missClip);
         }
     }
     
@@ -139,6 +144,10 @@ public class PlayerParryController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
             currentMashCount++;
+            
+            float hitPitch = 1f + ((float)currentMashCount / requiredMashes) * 0.8f;
+            AudioManager.Instance.PlayClashHit(hitPitch);
+            
             GameJuice.Instance.ShakeCameraUnscaled(0.1f, 0.2f);
             
             currentGiantProjectile.PushBackVisual(currentMashCount, requiredMashes);
@@ -168,6 +177,8 @@ public class PlayerParryController : MonoBehaviour
 
         currentGiantProjectile.ReflectSuperSpeed();
         GetComponent<PlayerHealth>().AddCombo(5);
+        
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.clashWinClip);
     }
 
     private void LoseClash()
